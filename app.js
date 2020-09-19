@@ -5,12 +5,26 @@
 
     const subBtn = document.getElementById('btn');
     const form = document.getElementById('dino-compare');
+    const name =  document.getElementById('name');
+    const height =
+        {
+        feet:  document.getElementById('feet'),
+        inches: document.getElementById('inches')
+        };
+    const weight = document.getElementById('weight');
+    const diet = document.getElementById('diet');
 
+    subBtn.disabled = true;
 
     // convert feet to inches to compare height - 1 foot = 12 inches
 
     function convertFeetToInches(feet) {
         return feet * 12;
+    }
+
+    // Random number generator
+    function randomNumber(max) {
+        return Math.floor(Math.random() * Math.floor(max));
     }
 
     // 2. Create Dino Constructor/FactoryFunction
@@ -54,7 +68,6 @@
                     let factor = this.weight/human.weight;
                     return `Looks like you are ${factor} times lighter than the average ${this.species}`;
                 }
-
             },
             compareHeight: function(human){
                 let humanHeightFt = convertFeetToInches(human.height.feet) + human.height.inches;
@@ -71,18 +84,38 @@
                 }
 
             },
-            generateRandomFact: function (){
+            generateRandomFact: function (human){
+                let index = randomNumber(10);
+                let fact;
 
-                
-
+                switch (index) {
+                    case 1:
+                        fact = this.compareWeight(human);
+                        break;
+                    case 2:
+                        fact = this.compareHeight(human);
+                        break;
+                    case 3:
+                        fact = this.compareDiet(human);
+                        break;
+                    case 4:
+                        fact = this.where;
+                        break;
+                    case 5:
+                        fact = this.when;
+                        break;
+                    case 6:
+                        fact = this.fact;
+                        break;
+                }
+                return fact;
             },
-
-
-            createTile: function() {
+            createTile: function(human) {
                 let tileHtml = `
                 <div class="grid-item">
                  <h2>${this.species}</h2>
                  <img src="${this.imageURL}" alt="${this.species}">
+                 <p>${this.generateRandomFact(human)}</p>
                 </div>
                 `;
                 return tileHtml;
@@ -94,7 +127,7 @@
 
     // 3. Create Human Constructor/FactoryFunction
 
-    function humanFactory(name, height, weight, diet) {
+    function humanFactory(name, heightFt, heightIn, weight, diet) {
         /**
          * @description Factory function for creating an object that represents a human
          * @param name {string}: name of human
@@ -104,7 +137,10 @@
          */
         return {
             name: name,
-            height: height,
+            height: {
+                feet: heightFt,
+                inches: heightIn
+            },
             weight: weight,
             diet: diet,
             image:  `./images/human.png`,
@@ -118,9 +154,6 @@
                 return tileHtml;
             }
         }
-
-
-
     }
 
 
@@ -130,11 +163,36 @@
 
     //    Remove form from screen
     //    Add click event listener to submit button to trigger event
-    subBtn.addEventListener('click', () => {
+
+    function checkFormValidation() {
+        if (name.value && height.feet.value && height.inches.value && weight.value && diet.value) {
+        subBtn.disabled = false
+        }
+    }
+
+    form.onchange = function() {checkFormValidation()};
+
+    subBtn.addEventListener('click', (e) => {
+        e.preventDefault();
         form.classList.add('hide');
+        const human = (function (name, heightFt, heightIn, weight, diet) {
+            return humanFactory(name, heightFt, heightIn, weight, diet);
+        })(name.value, height.feet.value, height.inches.value,  weight.value, diet.value);
+        buildInfographic(human);
     });
 
 
+    function buildInfographic(human) {
+        console.log(human);
+
+        // createDino List
+
+        // const humanTest = (humanFactory(name, height, weight, diet)(name, height, weight, diet));
+        //
+        // const human = (function (name, height, weight, diet) {
+        //     return humanFactory(name, height, weight, diet);
+        // })(name, height, weight, diet);
+    }
 
 
 
@@ -143,26 +201,26 @@
 }());
 
 
-    // Create Dino Constructor
+    // Create Dino Constructor (done)
 
 
     // Create Dino Objects
 
 
-    // Create Human Object
+    // Create Human Object(done)
 
     // Use IIFE to get human data from form
 
 
-    // Create Dino Compare Method 1
+    // Create Dino Compare Method 1 (done)
     // NOTE: Weight in JSON file is in lbs, height in inches.
 
 
-    // Create Dino Compare Method 2
+    // Create Dino Compare Method 2 (done)
     // NOTE: Weight in JSON file is in lbs, height in inches.
 
 
-    // Create Dino Compare Method 3
+    // Create Dino Compare Method 3 (done)
     // NOTE: Weight in JSON file is in lbs, height in inches.
 
 
