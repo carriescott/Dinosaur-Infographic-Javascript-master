@@ -1,8 +1,6 @@
 
-
 (function () {
-//    1. Set global variable constants
-
+//  Set global variable constants
     const subBtn = document.getElementById('btn');
     const form = document.getElementById('dino-compare');
     const name =  document.getElementById('name');
@@ -13,11 +11,11 @@
         };
     const weight = document.getElementById('weight');
     const diet = document.getElementById('diet');
+    const grid = document.getElementById('grid');
 
     subBtn.disabled = true;
 
     // convert feet to inches to compare height - 1 foot = 12 inches
-
     function convertFeetToInches(feet) {
         return feet * 12;
     }
@@ -27,8 +25,12 @@
         return Math.floor(Math.random() * Math.floor(max));
     }
 
-    // 2. Create Dino Constructor/FactoryFunction
+    // Convert first letter to lower case
+    function lowercaseFirstLetter(string) {
+        return string.charAt(0).toLowerCase() + string.slice(1);
+    }
 
+    // 2. Create Dino Constructor/FactoryFunction
     function dinosaurFactory(species, weight, height, diet, where, when, fact) {
         /**
          * @description Factory function for creating an object that represents a dinosaur
@@ -46,27 +48,32 @@
             weight: weight,
             height: height,
             diet: diet,
-            where: where,
-            when: when,
+            where: {
+                fact: where,
+                message: 'The ' + species + ' could be found in ' + where
+            },
+            when: {
+                fact: when,
+                message: 'The ' + species + ' lived in the ' + when + ' period'
+            },
             fact: fact,
-            imageURL: `./images/${this.species}.png`,
-            // write 3 comparison methods
+            imageURL: 'images/' + lowercaseFirstLetter(species) + '.png',
             compareDiet: function(human){
                 if (human.diet === this.diet) {
-                    return `Snap! You and the ${this.species} are both ${this.diet}s `;
+                    return 'Snap! You and the ' +  this.species + ' are both ' + this.diet + 's';
                 } else {
-                    return `You and the ${this.species} have different diets`;
+                    return 'You and the ' + this.species + ' have different diets';
                 }
             },
             compareWeight: function(human){
                 if (human.weight === this.weight) {
-                    return `Snap! You weigh the same as the average ${this.species}`;
+                    return 'Snap! You weigh the same as the average ' + this.species;
                 } else if (human.weight > this.weight) {
                     let factor = human.weight/this.weight;
-                    return `Wow! looks like you are ${factor} times heavier than the average ${this.species}`;
+                    return 'Wow! looks like you are ' + factor + ' times heavier than the average ' + this.species;
                 } else {
                     let factor = this.weight/human.weight;
-                    return `Looks like you are ${factor} times lighter than the average ${this.species}`;
+                    return 'Looks like you are ' + factor + ' times lighter than the average ' + this.species;
                 }
             },
             compareHeight: function(human){
@@ -74,37 +81,35 @@
                 let heightDiff;
 
                 if (humanHeightFt === height) {
-                    return `You are the same height as the average ${this.species}!`;
+                    return 'You are the same height as the average ' + this.species + '!';
                 } else if (humanHeightFt < height) {
                     heightDiff = height - humanHeightFt;
-                    return `You are ${heightDiff} inches smaller than the average ${this.species}`;
+                    return 'You are ' + heightDiff + ' inches smaller than the average ' + this.species;
                 } else {
                     heightDiff = humanHeightFt - height;
-                    return `You are the ${heightDiff} inches taller than the average ${this.species}`;
+                    return 'You are the ' +  heightDiff + ' inches taller than the average ' + this.species;
                 }
-
             },
             generateRandomFact: function (human){
-                let index = randomNumber(10);
+                let index = randomNumber(6);
                 let fact;
-
                 switch (index) {
-                    case 1:
+                    case 0:
                         fact = this.compareWeight(human);
                         break;
-                    case 2:
+                    case 1:
                         fact = this.compareHeight(human);
                         break;
-                    case 3:
+                    case 2:
                         fact = this.compareDiet(human);
                         break;
+                    case 3:
+                        fact = this.where.message;
+                        break;
                     case 4:
-                        fact = this.where;
+                        fact = this.when.message;
                         break;
                     case 5:
-                        fact = this.when;
-                        break;
-                    case 6:
                         fact = this.fact;
                         break;
                 }
@@ -120,13 +125,10 @@
                 `;
                 return tileHtml;
             }
-
         }
-
     }
 
     // 3. Create Human Constructor/FactoryFunction
-
     function humanFactory(name, heightFt, heightIn, weight, diet) {
         /**
          * @description Factory function for creating an object that represents a human
@@ -143,23 +145,18 @@
             },
             weight: weight,
             diet: diet,
-            image:  `./images/human.png`,
+            image: 'images/human.png',
             createTile: function() {
                 let tileHtml = `
                 <div class="grid-item">
                  <h2>${this.name}</h2>
-                 <img src="${this.imageURL}" alt="An image of ${this.name}">
+                 <img src="${this.image}" alt="An image of ${this.name}">
                 </div>
                 `;
                 return tileHtml;
             }
         }
     }
-
-
-
-
-
 
     //    Remove form from screen
     //    Add click event listener to submit button to trigger event
@@ -181,22 +178,31 @@
         buildInfographic(human);
     });
 
-
-    function buildInfographic(human) {
-        console.log(human);
-
-        // createDino List
-
-        // const humanTest = (humanFactory(name, height, weight, diet)(name, height, weight, diet));
-        //
-        // const human = (function (name, height, weight, diet) {
-        //     return humanFactory(name, height, weight, diet);
-        // })(name, height, weight, diet);
+    function createDinoList(data, human) {
+        const dinoList = data['Dinos'].map(item => dinosaurFactory(item.species, item.weight, item.height,
+            item.diet, item.where, item.when, item.fact).createTile(human));
+        return dinoList;
     }
 
+    function getDinos(callback) {
+        fetch('dino.json')
+            .then(response => response.json())
+            .then(data => {
+                callback(data);
+            });
+    }
 
-
-
+    function buildInfographic(human) {
+        let gridObjects = [];
+        // get data from JSON
+      getDinos((data) => {
+          gridObjects = createDinoList(data, human);
+          gridObjects.splice(4, 0, human.createTile());
+          for (let i=0; i<9; i++) {
+              grid.innerHTML += gridObjects[i];
+          }
+      });
+    }
 
 }());
 
