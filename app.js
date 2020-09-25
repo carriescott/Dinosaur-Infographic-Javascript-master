@@ -1,6 +1,7 @@
 
 (function () {
-//  Set global variable constants
+
+    // Set global variable constants
     const subBtn = document.getElementById('btn');
     const form = document.getElementById('dino-compare');
     const name =  document.getElementById('name');
@@ -13,9 +14,19 @@
     const diet = document.getElementById('diet');
     const grid = document.getElementById('grid');
 
+    // Disable form submission until all inputs have values
     subBtn.disabled = true;
 
-    // convert feet to inches to compare height - 1 foot = 12 inches
+    form.onchange = function() {checkFormValidation()};
+
+    // Check form validation
+    function checkFormValidation() {
+        if (name.value && height.feet.value && height.inches.value && weight.value && diet.value) {
+            subBtn.disabled = false
+        }
+    }
+
+    // Convert feet to inches
     function convertFeetToInches(feet) {
         return feet * 12;
     }
@@ -30,10 +41,9 @@
         return string.charAt(0).toLowerCase() + string.slice(1);
     }
 
-    // 2. Create Dino Constructor/FactoryFunction
     function dinosaurFactory(species, weight, height, diet, where, when, fact) {
         /**
-         * @description Factory function for creating an object that represents a dinosaur
+         * @description factory function for creating an object that represents a dinosaur
          * @param species {string}: species of dinosaur
          * @param weight {number}: weight of the dinosaur
          * @param height {number}: height of the dinosaur
@@ -41,8 +51,8 @@
          * @param where {string}: geographical location where the dinosaur was found/lived
          * @params when {string}: date the dinosaur would have lived
          * @params fact {string}: a fact about the dinosaur
+         * @returns dinosaur object {object}: an object containing properties and methods for a dinosaur
          */
-
         return {
             species: species,
             weight: weight,
@@ -59,6 +69,11 @@
             fact: fact,
             imageURL: 'images/' + lowercaseFirstLetter(species) + '.png',
             compareDiet: function(human){
+                /**
+                 * @description comparison function for comparing the diets of a dinosaur and a human
+                 * @param human {object}: object representing the human with a diet property
+                 * @returns diet comparison fact {string}
+                 */
                 if (human.diet === this.diet) {
                     return 'Snap! You and the ' +  this.species + ' are both ' + this.diet + 's';
                 } else {
@@ -66,6 +81,11 @@
                 }
             },
             compareWeight: function(human){
+                /**
+                 * @description comparison function for comparing the weight of a dinosaur and a human
+                 * @param human {object}: object representing the human with a weight property
+                 * @returns weight comparison fact {string}
+                 */
                 if (human.weight === this.weight) {
                     return 'Snap! You weigh the same as the average ' + this.species;
                 } else if (human.weight > this.weight) {
@@ -77,9 +97,13 @@
                 }
             },
             compareHeight: function(human){
+                /**
+                 * @description comparison function for comparing the heights of a dinosaur and a human
+                 * @param human {object}: object representing the human with a height property
+                 * @returns height comparison fact {string}
+                 */
                 let humanHeightFt = convertFeetToInches(human.height.feet) + human.height.inches;
                 let heightDiff;
-
                 if (humanHeightFt === height) {
                     return 'You are the same height as the average ' + this.species + '!';
                 } else if (humanHeightFt < height) {
@@ -91,6 +115,11 @@
                 }
             },
             generateRandomFact: function (human){
+                /**
+                 * @description function for generating a random fact about a dinosaur
+                 * @param human {object}: object representing the human with a diet, weight and height properties
+                 * @returns random fact about the dinosaur {string}
+                 */
                 let index = randomNumber(6);
                 let fact;
                 switch (index) {
@@ -116,6 +145,11 @@
                 return fact;
             },
             createTile: function(human) {
+                /**
+                 * @description function for creating a dinosaur tile
+                 * @param human {object}: object representing the human
+                 * @returns HTML element containing the dinosaur species, image and random fact
+                 */
                 let tileHtml = `
                 <div class="grid-item">
                  <h2>${this.species}</h2>
@@ -128,7 +162,7 @@
         }
     }
 
-    // 3. Create Human Constructor/FactoryFunction
+    // Create Human Constructor/FactoryFunction
     function humanFactory(name, heightFt, heightIn, weight, diet) {
         /**
          * @description Factory function for creating an object that represents a human
@@ -136,6 +170,7 @@
          * @param height {number}: height of the human
          * @param weight {number}: weight of the dinosaur
          * @param diet {string}: diet of the human; herbavor, carnivor, omnivor
+         * @returns human object {object}: an object containing properties and methods for a human
          */
         return {
             name: name,
@@ -147,6 +182,10 @@
             diet: diet,
             image: 'images/human.png',
             createTile: function() {
+                /**
+                 * @description function for creating a human tile
+                 * @returns HTML element containing the human name and image
+                 */
                 let tileHtml = `
                 <div class="grid-item">
                  <h2>${this.name}</h2>
@@ -158,50 +197,51 @@
         }
     }
 
-    //    Remove form from screen
-    //    Add click event listener to submit button to trigger event
-
-    function checkFormValidation() {
-        if (name.value && height.feet.value && height.inches.value && weight.value && diet.value) {
-        subBtn.disabled = false
-        }
-    }
-
-    form.onchange = function() {checkFormValidation()};
-
+    // Add event listener to submission button
     subBtn.addEventListener('click', (e) => {
         e.preventDefault();
         form.classList.add('hide');
+        // Use IIFE to get human data from form
         const human = (function (name, heightFt, heightIn, weight, diet) {
             return humanFactory(name, heightFt, heightIn, weight, diet);
         })(name.value, height.feet.value, height.inches.value,  weight.value, diet.value);
         buildInfographic(human);
     });
 
+    function buildInfographic(human) {
+        /**
+         * @description function to build an infographic to compare a human and multiple dinosaur species
+         * @param human {object}: object representing a human
+         */
+        let gridObjects = [];
+        getDinos((data) => {
+            gridObjects = createDinoList(data, human);
+            gridObjects.splice(4, 0, human.createTile());
+            for (let i=0; i<9; i++) {
+                grid.innerHTML += gridObjects[i];
+            }
+        });
+    }
+
     function createDinoList(data, human) {
+        /**
+         * @description function to create a list of dinosaur tiles
+         * @param data {object}: object containing dinosaur data
+         * @param human {object}: object representing a human
+         * @returns dinoList {array}: an array of dinosaur tiles
+         */
         const dinoList = data['Dinos'].map(item => dinosaurFactory(item.species, item.weight, item.height,
             item.diet, item.where, item.when, item.fact).createTile(human));
         return dinoList;
     }
 
+    // Get data from JSON
     function getDinos(callback) {
         fetch('dino.json')
             .then(response => response.json())
             .then(data => {
                 callback(data);
             });
-    }
-
-    function buildInfographic(human) {
-        let gridObjects = [];
-        // get data from JSON
-      getDinos((data) => {
-          gridObjects = createDinoList(data, human);
-          gridObjects.splice(4, 0, human.createTile());
-          for (let i=0; i<9; i++) {
-              grid.innerHTML += gridObjects[i];
-          }
-      });
     }
 
 }());
