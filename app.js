@@ -71,7 +71,7 @@
             compareDiet: function(human){
                 /**
                  * @description comparison function for comparing the diets of a dinosaur and a human
-                 * @param human {object}: object representing the human with a diet property
+                 * @param human {object}: object representing a human with a diet property
                  * @returns diet comparison fact {string}
                  */
                 if (human.diet === this.diet) {
@@ -99,7 +99,7 @@
             compareHeight: function(human){
                 /**
                  * @description comparison function for comparing the heights of a dinosaur and a human
-                 * @param human {object}: object representing the human with a height property
+                 * @param human {object}: object representing a human with a height property
                  * @returns height comparison fact {string}
                  */
                 let humanHeightFt = convertFeetToInches(human.height.feet) + human.height.inches;
@@ -117,7 +117,7 @@
             generateRandomFact: function (human){
                 /**
                  * @description function for generating a random fact about a dinosaur
-                 * @param human {object}: object representing the human with a diet, weight and height properties
+                 * @param human {object}: object representing a human with diet, weight and height properties
                  * @returns random fact about the dinosaur {string}
                  */
                 let index = randomNumber(6);
@@ -147,7 +147,7 @@
             createTile: function(human) {
                 /**
                  * @description function for creating a dinosaur tile
-                 * @param human {object}: object representing the human
+                 * @param human {object}: object representing a human
                  * @returns HTML element containing the dinosaur species, image and random fact
                  */
                 let tileHtml = `
@@ -169,7 +169,7 @@
          * @param name {string}: name of human
          * @param height {number}: height of the human
          * @param weight {number}: weight of the dinosaur
-         * @param diet {string}: diet of the human; herbavor, carnivor, omnivor
+         * @param diet {string}: diet of a human; herbavor, carnivor, omnivor
          * @returns human object {object}: an object containing properties and methods for a human
          */
         return {
@@ -210,7 +210,7 @@
 
     function buildInfographic(human) {
         /**
-         * @description function to build an infographic to compare a human and multiple dinosaur species
+         * @description function to build an infographic comparing a human and multiple dinosaur species
          * @param human {object}: object representing a human
          */
         let gridObjects = [];
@@ -245,40 +245,3 @@
     }
 
 }());
-
-
-    // Create Dino Constructor (done)
-
-
-    // Create Dino Objects
-
-
-    // Create Human Object(done)
-
-    // Use IIFE to get human data from form
-
-
-    // Create Dino Compare Method 1 (done)
-    // NOTE: Weight in JSON file is in lbs, height in inches.
-
-
-    // Create Dino Compare Method 2 (done)
-    // NOTE: Weight in JSON file is in lbs, height in inches.
-
-
-    // Create Dino Compare Method 3 (done)
-    // NOTE: Weight in JSON file is in lbs, height in inches.
-
-
-    // Generate Tiles for each Dino in Array
-
-        // Add tiles to DOM
-
-    // Remove form from screen (done)
-
-
-// On button click, prepare and display infographic
-    // get data from JSON
-
-
-
