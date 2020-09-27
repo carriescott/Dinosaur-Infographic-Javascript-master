@@ -120,6 +120,9 @@
                  * @param human {object}: object representing a human with diet, weight and height properties
                  * @returns random fact about the dinosaur {string}
                  */
+                if (this.species === 'Pigeon') {
+                    return this.fact;
+                }
                 let index = randomNumber(6);
                 let fact;
                 switch (index) {
