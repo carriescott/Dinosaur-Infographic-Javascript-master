@@ -41,18 +41,18 @@
         return string.charAt(0).toLowerCase() + string.slice(1);
     }
 
+    /**
+     * @description factory function for creating an object that represents a dinosaur
+     * @param species {string}: species of dinosaur
+     * @param weight {number}: weight of the dinosaur
+     * @param height {number}: height of the dinosaur
+     * @param diet {string}: diet of the dinosaur; herbavor, carnivor, omnivor
+     * @param where {string}: geographical location where the dinosaur was found/lived
+     * @params when {string}: date the dinosaur would have lived
+     * @params fact {string}: a fact about the dinosaur
+     * @returns {object}: an object containing properties and methods for a dinosaur
+     */
     function dinosaurFactory(species, weight, height, diet, where, when, fact) {
-        /**
-         * @description factory function for creating an object that represents a dinosaur
-         * @param species {string}: species of dinosaur
-         * @param weight {number}: weight of the dinosaur
-         * @param height {number}: height of the dinosaur
-         * @param diet {string}: diet of the dinosaur; herbavor, carnivor, omnivor
-         * @param where {string}: geographical location where the dinosaur was found/lived
-         * @params when {string}: date the dinosaur would have lived
-         * @params fact {string}: a fact about the dinosaur
-         * @returns dinosaur object {object}: an object containing properties and methods for a dinosaur
-         */
         return {
             species: species,
             weight: weight,
@@ -68,24 +68,24 @@
             },
             fact: fact,
             imageURL: 'images/' + lowercaseFirstLetter(species) + '.png',
+            /**
+             * @description comparison function for comparing the diets of a dinosaur and a human
+             * @param human {object}: object representing a human with a diet property
+             * @returns {string}: diet comparison fact
+             */
             compareDiet: function(human){
-                /**
-                 * @description comparison function for comparing the diets of a dinosaur and a human
-                 * @param human {object}: object representing a human with a diet property
-                 * @returns diet comparison fact {string}
-                 */
                 if (human.diet === this.diet) {
                     return 'Snap! You and the ' +  this.species + ' are both ' + this.diet + 's';
                 } else {
                     return 'You and the ' + this.species + ' have different diets';
                 }
             },
+            /**
+             * @description comparison function for comparing the weight of a dinosaur and a human
+             * @param human {object}: object representing the human with a weight property
+             * @returns {string}: weight comparison fact
+             */
             compareWeight: function(human){
-                /**
-                 * @description comparison function for comparing the weight of a dinosaur and a human
-                 * @param human {object}: object representing the human with a weight property
-                 * @returns weight comparison fact {string}
-                 */
                 if (human.weight === this.weight) {
                     return 'Snap! You weigh the same as the average ' + this.species;
                 } else if (human.weight > this.weight) {
@@ -96,12 +96,12 @@
                     return 'Looks like you are ' + factor + ' times lighter than the average ' + this.species;
                 }
             },
+            /**
+             * @description comparison function for comparing the heights of a dinosaur and a human
+             * @param human {object}: object representing a human with a height property
+             * @returns {string}: height comparison fact
+             */
             compareHeight: function(human){
-                /**
-                 * @description comparison function for comparing the heights of a dinosaur and a human
-                 * @param human {object}: object representing a human with a height property
-                 * @returns height comparison fact {string}
-                 */
                 let humanHeightFt = convertFeetToInches(human.height.feet) + human.height.inches;
                 let heightDiff;
                 if (humanHeightFt === height) {
@@ -114,12 +114,12 @@
                     return 'You are the ' +  heightDiff + ' inches taller than the average ' + this.species;
                 }
             },
+            /**
+             * @description function for generating a random fact about a dinosaur
+             * @param human {object}: object representing a human with diet, weight and height properties
+             * @returns {string}: random fact about the dinosaur
+             */
             generateRandomFact: function (human){
-                /**
-                 * @description function for generating a random fact about a dinosaur
-                 * @param human {object}: object representing a human with diet, weight and height properties
-                 * @returns random fact about the dinosaur {string}
-                 */
                 if (this.species === 'Pigeon') {
                     return this.fact;
                 }
@@ -147,12 +147,12 @@
                 }
                 return fact;
             },
+            /**
+             * @description function for creating a dinosaur tile
+             * @param human {object}: object representing a human
+             * @returns {string}: HTML element containing the dinosaur species, image and random fact
+             */
             createTile: function(human) {
-                /**
-                 * @description function for creating a dinosaur tile
-                 * @param human {object}: object representing a human
-                 * @returns HTML element containing the dinosaur species, image and random fact
-                 */
                 let tileHtml = `
                 <div class="grid-item">
                  <h2>${this.species}</h2>
@@ -166,15 +166,16 @@
     }
 
     // Create Human Constructor/FactoryFunction
+    /**
+     * @description Factory function for creating an object that represents a human
+     * @param name {string}: name of human
+     * @param heightFt {number}: height of the human in feet
+     * @param heightIn {number}:
+     * @param weight {number}: weight of the dinosaur
+     * @param diet {string}: diet of a human; herbavor, carnivor, omnivor
+     * @returns {{image: string, createTile: (function(): string), name: string, weight: number, diet: string, height: {feet: number, inches: number}}}: an object containing properties and methods for a human
+     */
     function humanFactory(name, heightFt, heightIn, weight, diet) {
-        /**
-         * @description Factory function for creating an object that represents a human
-         * @param name {string}: name of human
-         * @param height {number}: height of the human
-         * @param weight {number}: weight of the dinosaur
-         * @param diet {string}: diet of a human; herbavor, carnivor, omnivor
-         * @returns human object {object}: an object containing properties and methods for a human
-         */
         return {
             name: name,
             height: {
@@ -184,11 +185,11 @@
             weight: weight,
             diet: diet,
             image: 'images/human.png',
+            /**
+             * @description function for creating a human tile
+             * @returns {string}: HTML element containing the human name and image
+             */
             createTile: function() {
-                /**
-                 * @description function for creating a human tile
-                 * @returns HTML element containing the human name and image
-                 */
                 let tileHtml = `
                 <div class="grid-item">
                  <h2>${this.name}</h2>
@@ -211,11 +212,11 @@
         buildInfographic(human);
     });
 
+    /**
+     * @description function to build an infographic comparing a human and multiple dinosaur species
+     * @param human {object}: object representing a human
+     */
     function buildInfographic(human) {
-        /**
-         * @description function to build an infographic comparing a human and multiple dinosaur species
-         * @param human {object}: object representing a human
-         */
         let gridObjects = [];
         getDinos((data) => {
             gridObjects = createDinoList(data, human);
@@ -226,13 +227,13 @@
         });
     }
 
+    /**
+     * @description function to create a list of dinosaur tiles
+     * @param data {object}: object containing dinosaur data
+     * @param human {object}: object representing a human
+     * @returns {array}: an array of dinosaur tiles
+     */
     function createDinoList(data, human) {
-        /**
-         * @description function to create a list of dinosaur tiles
-         * @param data {object}: object containing dinosaur data
-         * @param human {object}: object representing a human
-         * @returns dinoList {array}: an array of dinosaur tiles
-         */
         const dinoList = data['Dinos'].map(item => dinosaurFactory(item.species, item.weight, item.height,
             item.diet, item.where, item.when, item.fact).createTile(human));
         return dinoList;
